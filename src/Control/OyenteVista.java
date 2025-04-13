@@ -1,13 +1,17 @@
 /*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
+ * Azahara Barjola 902020
+ * Jose María Rodriguez 900709
+ * Interfaz Oyente Vista
  */
-package Control;
+package control;
 
-/**
- *
- * @author azadi
- */
+
 public interface OyenteVista {
-    
+   public enum Evento { INSERTAR, BORRAR, MODIFICAR, SALIR }
+  
+   /**
+    *  Llamado para notificar un evento de la interfaz de usuario
+    * 
+    */ 
+   public void eventoProducido(Evento evento, Object obj) throws Exception;
 }
