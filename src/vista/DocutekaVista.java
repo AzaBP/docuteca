@@ -8,6 +8,7 @@ package vista;
 import control.OyenteVista;
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -57,6 +58,10 @@ public class DocutekaVista implements ActionListener, PropertyChangeListener {
     private static final String APLICACION = "Aplicacion";
     private static final String DOCUMENTO = "Documento";
     private static final String ASIGNATURA = "Asignatura";
+    
+    private static final String TEXTO_MODIFICAR = "¿Qué tipo de entidad es la instancia que quieres modificar?";
+    private static final String TEXTO_BORRAR = "¿Qué tipo de entidad es la instancia que quieres borrar?";
+    private static final String TEXTO_INSERTAR = "¿Qué tipo de entidad es la instancia que quieres insertar?";
     
     public static final int ALTURA = 70;
     public static final int ANCHURA = 30;
@@ -163,18 +168,14 @@ public class DocutekaVista implements ActionListener, PropertyChangeListener {
     public void actionPerformed(ActionEvent e){
         switch(e.getActionCommand()){
             case ETIQUETA_MODIFICAR:
-                System.out.println("Hola modificar");
                 modificarInstanciaEntidad();
                 break;
                 
             case ETIQUETA_INSERTAR:
-            System.out.println("Hola insertar");
                 insertarInstanciaEntidad();
                 break;
                 
             case ETIQUETA_BORRAR:
-            
-            System.out.println("Hola borrar");
                 borrarInstanciaEntidad();
                 break;
 
@@ -190,159 +191,170 @@ public class DocutekaVista implements ActionListener, PropertyChangeListener {
 
     /*
      * Muestra una ventana emergente con un JComboBox para seleccionar el tipo de entidad a modificar
-     * y otro JComboBox para seleccionar el atributo a modificar.
      */
     private void modificarInstanciaEntidad() {
-        JFrame ventanaEmergente = new JFrame("Modificar Instancia de Entidad");
-        configurarVentanaEmergente(ventanaEmergente);
-
-        JPanel panelAtributos = new JPanel(new BorderLayout());
+        JDialog ventanaEmergente = new JDialog(ventana, "Modificar Instancia de Entidad", true);
+        JPanel panelContenido = new JPanel();
+        JPanel panelEntidad = new JPanel();
+        JPanel panelAtributos = new JPanel();
         JPanel panelBotones = new JPanel();
-        JPanel panelVentanaEmergente = new JPanel();
 
-        panelVentanaEmergente.setLayout(new BoxLayout(panelVentanaEmergente, BoxLayout.Y_AXIS));
-        panelVentanaEmergente.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20)); 
-        panelAtributos.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        configurarElementosVentanaEmergente(ventanaEmergente, panelContenido, panelEntidad, panelAtributos, panelBotones);
         
-        JLabel titulo = new JLabel("¿Qué tipo de entidad es la instancia que quieres modificar?");
-        titulo.setAlignmentX(Component.CENTER_ALIGNMENT); 
-        panelVentanaEmergente.add(titulo, BorderLayout.NORTH);
-        panelVentanaEmergente.add(Box.createVerticalStrut(10));
+        anyadirElementosPanelEntidad(panelEntidad, panelAtributos, TEXTO_MODIFICAR);
 
+        panelBotonesAceptarCancelar(panelBotones);
+
+        // Añadir componentes al panel principal
+        panelContenido.add(panelEntidad);
+        panelContenido.add(panelAtributos);
+        panelContenido.add(Box.createVerticalGlue());
+        panelContenido.add(panelBotones);
+        
+        ventanaEmergente.add(panelContenido, BorderLayout.CENTER);
+        ventanaEmergente.pack();
+        ventanaEmergente.setLocationRelativeTo(ventana);
+        ventanaEmergente.setVisible(true);
+    }
+    
+    private void anyadirElementosPanelEntidad(JPanel panelEntidad, JPanel panelAtributos, String texto) {
+        JLabel lblEntidad = new JLabel(texto);
+        lblEntidad.setAlignmentX(Component.CENTER_ALIGNMENT);
+        panelEntidad.add(lblEntidad);
+        panelEntidad.add(Box.createRigidArea(new Dimension(0, 10)));
+        
         String[] opcionesEntidades = {DOCUMENTO, ASIGNATURA, APLICACION};
         JComboBox<String> selecEntidades = new JComboBox<>(opcionesEntidades);
-        panelVentanaEmergente.add(selecEntidades, BorderLayout.CENTER);
-
-        seleccionarEntidad(selecEntidades, panelAtributos);
-        panelVentanaEmergente.add(panelAtributos, BorderLayout.SOUTH);
-
-        anyadirBotones(panelBotones);
-        panelVentanaEmergente.add(panelBotones, BorderLayout.SOUTH);
+        selecEntidades.setMaximumSize(new Dimension(Integer.MAX_VALUE, selecEntidades.getPreferredSize().height));
+        selecEntidades.setAlignmentX(Component.CENTER_ALIGNMENT);
+        panelEntidad.add(selecEntidades);
         
-        ventanaEmergente.getContentPane().add(panelVentanaEmergente, BorderLayout.CENTER);
-        
+        // Configurar acción para el combo de entidades si el texto es "Modificar"
+        if(texto.equals(TEXTO_MODIFICAR)){
+            selecEntidades.addActionListener(e -> {
+                String seleccion = (String) selecEntidades.getSelectedItem();
+                mostrarPanelAtributos(seleccion, panelAtributos);
+            });
+        }
     }
 
-    private void configurarVentanaEmergente(JFrame ventanaEmergente){
-        ventanaEmergente.setSize(450, 450);
-        ventanaEmergente.setVisible(true);
-        ventanaEmergente.setLocationRelativeTo(null);
+    private void configurarElementosVentanaEmergente(JDialog ventanaEmergente, JPanel panelContenido,
+            JPanel panelEntidad, JPanel panelAtributos, JPanel panelBotones) {
+            
+            ventanaEmergente.setMinimumSize(new Dimension(400, 400));
+            ventanaEmergente.setLayout(new BorderLayout());
+                
+            panelContenido.setLayout(new BoxLayout(panelContenido, BoxLayout.Y_AXIS));
+            panelContenido.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+                    
+            panelEntidad.setLayout(new BoxLayout(panelEntidad, BoxLayout.Y_AXIS));
+            panelEntidad.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+            panelAtributos.setLayout(new BoxLayout(panelAtributos, BoxLayout.Y_AXIS));
+            panelAtributos.setAlignmentX(Component.CENTER_ALIGNMENT);
+            panelAtributos.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0));
 
     }
 
-    private void anyadirBotones(JPanel panelSur) {
-        panelSur.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10)); 
+    private void panelBotonesAceptarCancelar(JPanel panelBotones) {
+            panelBotones.setLayout(new BoxLayout(panelBotones, BoxLayout.X_AXIS));
+            panelBotones.setAlignmentX(Component.CENTER_ALIGNMENT);
+            panelBotones.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
+            panelBotones.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
+        
+            botonAceptar = crearBoton(ETIQUETA_ACEPTAR, true);
+            botonCancelar = crearBoton(ETIQUETA_CANCELAR, true);
+            panelBotones.add(botonAceptar);
+            panelBotones.add(botonCancelar);
 
-        botonAceptar = crearBoton(ETIQUETA_ACEPTAR, true);
-        botonCancelar = crearBoton(ETIQUETA_CANCELAR, true);
-    
-        panelSur.add(botonAceptar); 
-        panelSur.add(botonCancelar);
     }
 
     /*
-     * Muestra un JComboBox para seleccionar el tipo de entidad a modificar 
+     * Muestra los atributos para la entidad seleccionada
      */
-    public void seleccionarEntidad(JComboBox<String> selecEntidades, JPanel panelAtributos) {
-        selecEntidades.addActionListener(e -> {
-            String seleccion = (String) selecEntidades.getSelectedItem();
-            modificarEntidad(seleccion, panelAtributos);
-        });
-    }
-
-    /*
-     * Muestra un JComboBox para seleccionar el atributo a modificar de la entidad seleccionada
-     */
-    public void modificarEntidad(String entidad, JPanel panelAtributos) {
+    private void mostrarPanelAtributos(String entidad, JPanel panelAtributos) {
+        panelAtributos.removeAll();
         
-        panelAtributos.setLayout(new BoxLayout(panelAtributos, BoxLayout.Y_AXIS));
-
-        String textoEleccion = "Selecciona el atributo que quieres modificar:";
-        JLabel etiquetaTextoEleccion = new JLabel(textoEleccion);
-        etiquetaTextoEleccion.setAlignmentX(Component.LEFT_ALIGNMENT); 
-        panelAtributos.add(etiquetaTextoEleccion);
-
-
-        mostrarAtributos(entidad, panelAtributos);
-
-        panelAtributos.add(Box.createVerticalStrut(10));
-
-        String textoCampoTexto = "Introduce el nuevo valor del atributo:";
-        JLabel etiquetaTextoCampoTexto = new JLabel(textoCampoTexto);
-        panelAtributos.add(etiquetaTextoCampoTexto);
-
-        JTextField campoTexto = new JTextField( 20);
-        panelAtributos.add(campoTexto);
-
-        panelAtributos.revalidate();
-        panelAtributos.repaint();
-    }
-
-    /*
-     * Muestra un JComboBox con los atributos de la entidad seleccionada
-     */
-    public void mostrarAtributos(String entidad, JPanel panelAtributos) {
+        if (entidad == null || entidad.isEmpty()) {
+            panelAtributos.revalidate();
+            panelAtributos.repaint();
+            return;
+        }
         
-        panelAtributos.removeAll(); 
-
+        JLabel lblAtributo = new JLabel("Selecciona el atributo que quieres modificar:");
+        lblAtributo.setAlignmentX(Component.LEFT_ALIGNMENT);
+        panelAtributos.add(lblAtributo);
+        panelAtributos.add(Box.createRigidArea(new Dimension(0, 10)));
+        
         String[] atributos = null;
-
         switch (entidad) {
             case DOCUMENTO:
-                atributos = Documento.getAtributos(); 
+                atributos = Documento.getAtributos();
                 break;
             case ASIGNATURA:
-                atributos = Asignatura.getAtributos(); 
+                atributos = Asignatura.getAtributos();
                 break;
             case APLICACION:
-                atributos = Aplicacion.getAtributos(); 
+                atributos = Aplicacion.getAtributos();
                 break;
         }
-
+        
         if (atributos != null) {
-        selecAtributos = new JComboBox<>(atributos);
-        selecAtributos.setAlignmentX(Component.LEFT_ALIGNMENT); // Alinea el JComboBox a la izquierda
-        panelAtributos.add(selecAtributos);
+            selecAtributos = new JComboBox<>(atributos);
+            selecAtributos.setMaximumSize(new Dimension(Integer.MAX_VALUE, selecAtributos.getPreferredSize().height));
+            selecAtributos.setAlignmentX(Component.LEFT_ALIGNMENT);
+            panelAtributos.add(selecAtributos);
+            panelAtributos.add(Box.createRigidArea(new Dimension(0, 15)));
+            
+            JLabel lblNuevoValor = new JLabel("Introduce el nuevo valor del atributo:");
+            lblNuevoValor.setAlignmentX(Component.LEFT_ALIGNMENT);
+            panelAtributos.add(lblNuevoValor);
+            panelAtributos.add(Box.createRigidArea(new Dimension(0, 5)));
+            
+            cambioAtributo = new JTextField();
+            cambioAtributo.setMaximumSize(new Dimension(Integer.MAX_VALUE, cambioAtributo.getPreferredSize().height));
+            cambioAtributo.setAlignmentX(Component.LEFT_ALIGNMENT);
+            panelAtributos.add(cambioAtributo);
         }
-
-        // Actualiza el panel
+        
         panelAtributos.revalidate();
         panelAtributos.repaint();
         
-        panelAtributos.setVisible(true);
     }
 
     /*
-     * Muestra una ventana emergente para seleccionar el tipo de entidad a borrar y el atributo a borrar
+     * Muestra una ventana emergente para seleccionar el tipo INSTANCIA a borrar
      */
     private void borrarInstanciaEntidad() {
-        JFrame ventanaEmergente = new JFrame("Borrar Instancia de Entidad");
         
-        JPanel panelVentanaEmergente = new JPanel();
-        panelVentanaEmergente.setLayout(new BoxLayout(panelVentanaEmergente, BoxLayout.Y_AXIS));
-        panelVentanaEmergente.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20)); 
+            JDialog ventanaEmergente = new JDialog(ventana, "Borrar Instancia de Entidad", true);
+            JPanel panelContenido = new JPanel();
+            JPanel panelEntidad = new JPanel();
+            JPanel panelCentral = new JPanel();
+            JPanel panelBotones = new JPanel();
+    
+            configurarElementosVentanaEmergente(ventanaEmergente, panelContenido, panelEntidad, panelCentral, panelBotones);
+            
+            anyadirElementosPanelEntidad(panelEntidad, panelCentral, TEXTO_BORRAR);
+    
+            panelBotonesAceptarCancelar(panelBotones);
+
+            JLabel lblTexto = new JLabel("Introduce la clave primaria de la instancia que quieres borrar:");
+            JTextField campoTexto = new JTextField(20);
+            campoTexto.setMaximumSize(new Dimension(Integer.MAX_VALUE, campoTexto.getPreferredSize().height));
+            panelCentral.add(campoTexto, BorderLayout.CENTER);
+    
+            // Añadir componentes al panel principal
+            panelContenido.add(panelEntidad);
+            panelContenido.add(panelCentral);
+            panelContenido.add(Box.createVerticalGlue());
+            panelContenido.add(panelBotones);
+            
+            ventanaEmergente.add(panelContenido, BorderLayout.CENTER);
+            ventanaEmergente.pack();
+            ventanaEmergente.setLocationRelativeTo(ventana);
+            ventanaEmergente.setVisible(true);
         
-        
-        String textoVentana = "¿Qué tipo de entidad es la instancia que quieres borrar?";
-        JLabel etiquetaTexto = new JLabel(textoVentana);
-        etiquetaTexto.setFont(new Font("Arial", Font.BOLD, 10));
-        etiquetaTexto.setHorizontalAlignment(SwingConstants.CENTER);
-        etiquetaTexto.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
-        panelVentanaEmergente.add(etiquetaTexto, BorderLayout.NORTH);
-
-        String elegirInstanciaEntidad = "Quieres eliminar la instancia total o solo un atributo?";
-        JLabel etiquetaTextoInstancia = new JLabel(elegirInstanciaEntidad);
-        etiquetaTextoInstancia.setFont(new Font("Arial", Font.BOLD, 10));
-        etiquetaTextoInstancia.setHorizontalAlignment(SwingConstants.CENTER);
-        etiquetaTextoInstancia.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
-        panelVentanaEmergente.add(etiquetaTextoInstancia, BorderLayout.NORTH);
-
-
-    //BORRAR INSTANCIA TOTAL O SOLO ATRIBUTO?
-        //SI ES INSTANCIA
-            //PEDIR CP
-        //SI ES ATRIBUTO
-            //MODIFICARiNSTANCIAeNTIDAD PARA BORRAR
     }
 
     private void insertarInstanciaEntidad() {
