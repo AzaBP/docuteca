@@ -37,6 +37,10 @@ public class Documento {
         this.nombreIdentificativoAplicacion = aplicacion.getNombreIdentificativo();
     }
 
+    public static String[] getAtributos(){
+        return new String[] {"nombre", "tipo", "fechaCreación", "descripcion_contenido", "claveAsignatura", "nombreIdentificativoAplicacion"};
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {

@@ -9,7 +9,6 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.HashMap;
 import java.util.Map;
-import vista.DocutekaVista;
 
 
 public class DocutekaModelo{
@@ -29,7 +28,7 @@ public class DocutekaModelo{
     }
 
     public void desconectar() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        System.out.println("Desconectando...");
     }
 
     public void borrar() {

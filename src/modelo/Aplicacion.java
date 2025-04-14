@@ -22,6 +22,10 @@ public class Aplicacion {
         return nombreIdentificativo;
     }
     
+    public static String[] getAtributos(){
+        return new String[] { "nombre", "fabricante", "nombreIdentificativo", "version"};
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {

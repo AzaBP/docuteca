@@ -21,6 +21,10 @@ public class Asignatura {
     String getClave() {
         return clave;      
     }
+
+    public static String[] getAtributos(){
+        return new String[] {"nombre", "clave", "curso", "titulacion"};
+    }
     
     @Override
     public boolean equals(Object obj) {
