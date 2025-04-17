@@ -11,21 +11,15 @@ import java.beans.PropertyChangeSupport;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
 
 
 public class DocutekaModelo{
-    private Map<String, Documento> documentos;
-    private Map<String , Aplicacion> aplicaciones;
-    private Map<String, Asignatura> asignaturas;
     private PropertyChangeSupport observadores;
     
     /*
     * Construye el modelo de la docuteka
     */
     public DocutekaModelo(){
-        documentos = new HashMap<>();
         observadores = new PropertyChangeSupport(this);
     }
     
@@ -48,16 +42,24 @@ public class DocutekaModelo{
     public void insertar() {
     System.out.println("Insertando...");
     }
-    // Inserta un documento en la base de datos
-    public void insertarDocumento(String id, String titulo) throws SQLException {
-        String sql = "INSERT INTO documentos (id, titulo) VALUES (?, ?)";
+
+    public void insertarDocumento(int numeroCorrelativo, String fechaCreacion, String nombre, String tipo, String descripcionContenido, String clave, String nombreApp) throws SQLException {
+        if (nombre == null || nombre.isEmpty() || tipo == null || tipo.isEmpty()) {
+            throw new IllegalArgumentException("Error: Los campos 'nombre' y 'tipo' no pueden estar vacíos.");
+        }
+    
+        String sql = "INSERT INTO public.\"Documento\" (\"numero correlativo\", \"fecha creacion\", nombre, tipo, \"descirpcion contenido\", clave, nombre_app) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, id);
-            stmt.setString(2, titulo);
+            stmt.setInt(1, numeroCorrelativo);
+            stmt.setDate(2, java.sql.Date.valueOf(fechaCreacion)); // Convierte la fecha a java.sql.Date
+            stmt.setString(3, nombre);
+            stmt.setString(4, tipo);
+            stmt.setString(5, descripcionContenido);
+            stmt.setString(6, clave);
+            stmt.setString(7, nombreApp);
             stmt.executeUpdate();
             System.out.println("Documento insertado correctamente.");
         }
     }
-    
 }

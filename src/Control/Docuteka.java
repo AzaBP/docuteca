@@ -5,6 +5,8 @@
  */
 package control;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
 import modelo.DocutekaModelo;
 import vista.DocutekaVista;
 
@@ -38,9 +40,17 @@ public class Docuteka implements OyenteVista{
                     break;
                 
                 case INSERTAR:
-                System.out.println("Insertar: " + obj.toString());
-                String[] datos = obj.toString().split(","); // Suponiendo que los datos vienen separados por comas
-                docutekaModelo.insertarDocumento(datos[0], datos[1]);
+                    System.out.println("Insertar: " + obj.toString());
+                    String[] datosInsertar = obj.toString().split(",");
+                    docutekaModelo.insertarDocumento(
+                        Integer.parseInt(datosInsertar[0]), // Assuming the first value is an int
+                        datosInsertar[1], 
+                        datosInsertar[2], 
+                        datosInsertar[3], 
+                        datosInsertar[4], 
+                        datosInsertar[5], 
+                        datosInsertar[6]
+                    );
                 break;
                 
                 case BORRAR:
@@ -59,6 +69,17 @@ public class Docuteka implements OyenteVista{
      * Metodo main
      */
     public static void main(String[] args) {
-        //new Docuteka();
+        new Docuteka();
+
+        String url = "jdbc:postgresql://localhost:5432/Docuteka";
+        String user = "postgres";
+        String password = "aza05dumask";
+
+        try (Connection conexion = DriverManager.getConnection(url, user, password)) {
+            System.out.println("🎉 ¡Conexión exitosa a PostgreSQL!");
+            // Aquí puedes usar tus DAOs (ClienteDAO, etc.)
+        } catch (Exception e) {
+            System.err.println("Error: " + e.getMessage());
+        }
     }
 }

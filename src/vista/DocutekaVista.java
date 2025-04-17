@@ -409,7 +409,7 @@ public class DocutekaVista implements ActionListener, PropertyChangeListener {
                         String texto = campo.getText().trim();
                         if (texto.isEmpty()) {
                             JOptionPane.showMessageDialog(ventanaEmergente, "Todos los campos deben estar completos.", "Error", JOptionPane.ERROR_MESSAGE);
-                            return;
+                            return; // Detenemos el flujo si algún campo está vacío
                         }
                         valores.append(texto).append(", ");
                     }
@@ -419,9 +419,14 @@ public class DocutekaVista implements ActionListener, PropertyChangeListener {
                 String texto = campoTexto.getText().trim();
                 if (texto.isEmpty()) {
                     JOptionPane.showMessageDialog(ventanaEmergente, "El campo no puede estar vacío.", "Error", JOptionPane.ERROR_MESSAGE);
-                    return;
+                    return; // Detenemos el flujo si el campo está vacío
                 }
                 valores.append(texto);
+            }
+    
+            // Elimina la última coma si es necesario
+            if (valores.length() > 0 && valores.charAt(valores.length() - 1) == ',') {
+                valores.setLength(valores.length() - 1);
             }
     
             // Enviar los valores al controlador
@@ -429,7 +434,7 @@ public class DocutekaVista implements ActionListener, PropertyChangeListener {
             try {
                 oyenteVista.eventoProducido(evento, valores.toString());
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(ventanaEmergente, "Error al procesar la información.", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(ventanaEmergente, "Error al procesar la información: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
     
             // Cierra la ventana después de aceptar
