@@ -23,7 +23,7 @@ public class Asignatura {
     }
 
     public static String[] getAtributos(){
-        return new String[] {"nombre", "clave", "curso", "titulacion"};
+        return new String[] {"clave", "nombre", "curso", "titulación"};
     }
     
     @Override

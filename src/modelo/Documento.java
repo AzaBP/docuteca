@@ -5,12 +5,10 @@
  */
 package modelo;
 
-import java.util.Objects;
-
 
 public class Documento {
     int numeroCorrelativoDocumento;
-    String fechaCreación;
+    String fechaCreacion;
     String nombre;
     String tipo;
     String descripcion_contenido;
@@ -27,9 +25,9 @@ public class Documento {
         return nombreIdentificativoAplicacion = aplicacion.getNombreIdentificativo();
     }
 
-    private Documento(int numeroCorrelativoDocumento, String fechaCreación, String nombre, String tipo, String descripcion_contenido, String claveAsignatura, String nombreIdentificativoAplicacion) {
+    private Documento(int numeroCorrelativoDocumento, String fechaCreacion, String nombre, String tipo, String descripcion_contenido, String claveAsignatura, String nombreIdentificativoAplicacion) {
         this.numeroCorrelativoDocumento = numeroCorrelativoDocumento;
-        this.fechaCreación = fechaCreación;
+        this.fechaCreacion = fechaCreacion;
         this.nombre = nombre;
         this.tipo = tipo;
         this.descripcion_contenido = descripcion_contenido;
@@ -38,7 +36,7 @@ public class Documento {
     }
 
     public static String[] getAtributos(){
-        return new String[] {"nombre", "tipo", "fechaCreación", "descripcion_contenido", "claveAsignatura", "nombreIdentificativoAplicacion"};
+        return new String[] {"numero correlativo", "nombre identificativo", "nombre", "tipo", "fecha creación", "descripción contenido", "clave"};
     }
 
     @Override

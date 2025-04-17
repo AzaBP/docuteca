@@ -33,14 +33,18 @@ public class Docuteka implements OyenteVista{
     
             switch(evento){
                 case MODIFICAR:
+                    System.out.println("Modificar: " + obj.toString());
                     docutekaModelo.modificar();
                     break;
                 
                 case INSERTAR:
-                    docutekaModelo.insertar();
-                    break;
+                System.out.println("Insertar: " + obj.toString());
+                String[] datos = obj.toString().split(","); // Suponiendo que los datos vienen separados por comas
+                docutekaModelo.insertarDocumento(datos[0], datos[1]);
+                break;
                 
                 case BORRAR:
+                System.out.println("borrar: " + obj.toString());
                     docutekaModelo.borrar();
                     break;
                    
@@ -54,8 +58,7 @@ public class Docuteka implements OyenteVista{
     /**
      * Metodo main
      */
-     public static void main(String[] args) {
-        new Docuteka();
+    public static void main(String[] args) {
+        //new Docuteka();
     }
-
 }

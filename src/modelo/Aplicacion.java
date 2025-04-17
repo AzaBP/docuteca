@@ -23,7 +23,7 @@ public class Aplicacion {
     }
     
     public static String[] getAtributos(){
-        return new String[] { "nombre", "fabricante", "nombreIdentificativo", "version"};
+        return new String[] { "nombre identificativo", "nombre", "versión", "fabricante"};
     }
 
     @Override
