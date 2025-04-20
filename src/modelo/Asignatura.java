@@ -36,5 +36,9 @@ public class Asignatura {
         }
         return clave == ((Asignatura) obj).clave;
     }
+
+    public static String getAtributoPK() {
+        return "clave";
+    }
     
 }

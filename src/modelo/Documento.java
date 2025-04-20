@@ -49,5 +49,9 @@ public class Documento {
         }
         return numeroCorrelativoDocumento == ((Documento) obj).numeroCorrelativoDocumento;
     }
+
+    public static String getAtributoPK() {
+        return "numero_correlativo";
+    }
     
 }

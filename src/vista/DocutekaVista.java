@@ -17,6 +17,9 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.*;
 import modelo.Aplicacion;
 import modelo.Asignatura;
@@ -205,7 +208,7 @@ public class DocutekaVista implements ActionListener, PropertyChangeListener {
         anyadirElementosPanelEntidad(panelEntidad, panelAtributos, TEXTO_MODIFICAR, campoTexto);
     
         // Añadir interacción a los botones
-        panelBotonesAceptarCancelarGeneral(panelBotones, ventanaEmergente, panelAtributos, campoTexto, OyenteVista.Evento.MODIFICAR);
+        panelBotonesAceptarCancelarGeneral(panelBotones, ventanaEmergente, panelAtributos, campoTexto, OyenteVista.Evento.MODIFICAR, selecAtributos);
 
         // Añadir componentes al panel principal
         panelContenido.setLayout(new BorderLayout());
@@ -316,41 +319,21 @@ public class DocutekaVista implements ActionListener, PropertyChangeListener {
     }
 
     private void mostrarCamposAtributos(String entidad, JPanel panelAtributos) {
-        panelAtributos.removeAll(); // Limpia el panel antes de agregar nuevos componentes
-    
-        // Obtener los atributos según la entidad seleccionada
-        String[] atributos = null;
-        switch (entidad) {
-            case DOCUMENTO:
-                atributos = Documento.getAtributos();
-                break;
-            case ASIGNATURA:
-                atributos = Asignatura.getAtributos();
-                break;
-            case APLICACION:
-                atributos = Aplicacion.getAtributos();
-                break;
+        panelAtributos.removeAll();
+        
+        for (String atributo : atributos) {
+            JLabel lbl = new JLabel(atributo + ":");
+            lbl.setAlignmentX(Component.LEFT_ALIGNMENT);
+            panelAtributos.add(lbl);
+            
+            JTextField txtField = new JTextField(20);
+            txtField.setName(atributo); // Para identificación
+            panelAtributos.add(txtField);
         }
-    
-        // Si hay atributos, crea campos de texto y etiquetas dinámicamente
-        if (atributos != null) {
-            for (String atributo : atributos) {
-                JLabel lblAtributo = new JLabel(atributo + ":");
-                lblAtributo.setAlignmentX(Component.LEFT_ALIGNMENT);
-                panelAtributos.add(lblAtributo);
-    
-                JTextField campoTexto = new JTextField(20);
-                campoTexto.setMaximumSize(new Dimension(Integer.MAX_VALUE, campoTexto.getPreferredSize().height));
-                campoTexto.setAlignmentX(Component.LEFT_ALIGNMENT);
-                panelAtributos.add(campoTexto);
-            }
-        }
-    
-        // Actualiza el panel
+        
         panelAtributos.revalidate();
         panelAtributos.repaint();
     }
-
     /*
      * Muestra una ventana emergente para seleccionar el tipo INSTANCIA a borrar
      */
@@ -378,7 +361,7 @@ public class DocutekaVista implements ActionListener, PropertyChangeListener {
         panelCentral.add(campoTexto);
     
         // Añadir interacción a los botones
-        panelBotonesAceptarCancelarGeneral(panelBotones, ventanaEmergente, null, campoTexto, OyenteVista.Evento.BORRAR);
+        panelBotonesAceptarCancelarGeneral(panelBotones, ventanaEmergente, null, campoTexto, OyenteVista.Evento.BORRAR, selecAtributos);
     
         // Añadir componentes al panel principal
         panelContenido.setLayout(new BorderLayout());
@@ -392,66 +375,6 @@ public class DocutekaVista implements ActionListener, PropertyChangeListener {
         ventanaEmergente.setVisible(true);
     }
 
-    private void panelBotonesAceptarCancelarGeneral(JPanel panelBotones, JDialog ventanaEmergente, JPanel panelAtributos, JTextField campoTexto, OyenteVista.Evento evento) {
-        panelBotones.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
-    
-        // Botón Aceptar
-        botonAceptar = crearBoton(ETIQUETA_ACEPTAR, true);
-        botonAceptar.addActionListener(e -> {
-            StringBuilder valores = new StringBuilder();
-    
-            // Recopilar los valores de los campos de texto
-            if (panelAtributos != null) {
-                Component[] componentes = panelAtributos.getComponents();
-                for (Component componente : componentes) {
-                    if (componente instanceof JTextField) {
-                        JTextField campo = (JTextField) componente;
-                        String texto = campo.getText().trim();
-                        if (texto.isEmpty()) {
-                            JOptionPane.showMessageDialog(ventanaEmergente, "Todos los campos deben estar completos.", "Error", JOptionPane.ERROR_MESSAGE);
-                            return; // Detenemos el flujo si algún campo está vacío
-                        }
-                        valores.append(texto).append(", ");
-                    }
-                }
-            } else if (campoTexto != null) {
-                // Si es un caso como BORRAR o MODIFICAR con un solo campo
-                String texto = campoTexto.getText().trim();
-                if (texto.isEmpty()) {
-                    JOptionPane.showMessageDialog(ventanaEmergente, "El campo no puede estar vacío.", "Error", JOptionPane.ERROR_MESSAGE);
-                    return; // Detenemos el flujo si el campo está vacío
-                }
-                valores.append(texto);
-            }
-    
-            // Elimina la última coma si es necesario
-            if (valores.length() > 0 && valores.charAt(valores.length() - 1) == ',') {
-                valores.setLength(valores.length() - 1);
-            }
-    
-            // Enviar los valores al controlador
-            System.out.println("Valores introducidos: " + valores.toString());
-            try {
-                oyenteVista.eventoProducido(evento, valores.toString());
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(ventanaEmergente, "Error al procesar la información: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-            }
-    
-            // Cierra la ventana después de aceptar
-            ventanaEmergente.dispose();
-        });
-    
-        // Botón Cancelar
-        botonCancelar = crearBoton(ETIQUETA_CANCELAR, true);
-        botonCancelar.addActionListener(e -> {
-            // Cierra solo la ventana emergente
-            ventanaEmergente.dispose();
-        });
-    
-        panelBotones.add(botonAceptar);
-        panelBotones.add(botonCancelar);
-    }
-    
 
     private void insertarInstanciaEntidad() {
         JDialog ventanaEmergente = new JDialog(ventana, "Insertar Instancia de Entidad", true);
@@ -480,7 +403,7 @@ public class DocutekaVista implements ActionListener, PropertyChangeListener {
         });
 
     // Añadir interacción a los botones
-        panelBotonesAceptarCancelarGeneral(panelBotones, ventanaEmergente, panelAtributos, null, OyenteVista.Evento.INSERTAR);
+        panelBotonesAceptarCancelarGeneral(panelBotones, ventanaEmergente, panelAtributos, null, OyenteVista.Evento.INSERTAR, selecEntidades);
 
     // Añadir componentes al panel principal
         panelContenido.setLayout(new BorderLayout());
@@ -492,6 +415,134 @@ public class DocutekaVista implements ActionListener, PropertyChangeListener {
         ventanaEmergente.pack();
         ventanaEmergente.setLocationRelativeTo(ventana);
         ventanaEmergente.setVisible(true);
+    }
+
+    private void panelBotonesAceptarCancelarGeneral(JPanel panelBotones, JDialog ventanaEmergente, JPanel panelAtributos, JTextField campoTexto, OyenteVista.Evento evento, JComboBox<String> selecEntidades) {
+        panelBotones.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
+    
+        // Botón Aceptar
+        botonAceptar = crearBoton(ETIQUETA_ACEPTAR, true);
+        botonAceptar.addActionListener(e -> {
+            switch (evento) {
+                case INSERTAR:
+                    manejarInsertar(panelAtributos, ventanaEmergente, selecEntidades);
+                    break;
+                case MODIFICAR:
+                    manejarModificar(campoTexto,selecEntidades,selecAtributos,ventanaEmergente);
+                    break;
+                case BORRAR:
+                    manejarBorrar(campoTexto, selecEntidades, ventanaEmergente);
+                    break;
+            }
+        });
+    
+        // Botón Cancelar
+        botonCancelar = crearBoton(ETIQUETA_CANCELAR, true);
+        botonCancelar.addActionListener(e -> ventanaEmergente.dispose());
+    
+        panelBotones.add(botonAceptar);
+        panelBotones.add(botonCancelar);
+    }
+
+    private void manejarBorrar(JTextField campoTexto, JComboBox<String> selecEntidades, JDialog ventanaEmergente) {
+        String clavePrimaria = campoTexto.getText().trim();
+        String entidadSeleccionada = (String) selecEntidades.getSelectedItem();
+    
+        if (entidadSeleccionada == null || entidadSeleccionada.isEmpty()) {
+            JOptionPane.showMessageDialog(ventanaEmergente, "Debe seleccionar una entidad.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+    
+        if (clavePrimaria.isEmpty()) {
+            JOptionPane.showMessageDialog(ventanaEmergente, "Debe proporcionar una clave primaria.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        String atributoPK = null;
+        switch(entidadSeleccionada) {
+            case DOCUMENTO:
+                atributoPK = Documento.getAtributoPK();
+                break;
+            case ASIGNATURA:
+                atributoPK = Asignatura.getAtributoPK();
+                break;
+            case APLICACION:
+                atributoPK = Aplicacion.getAtributoPK();
+                break;
+            default:
+                JOptionPane.showMessageDialog(ventanaEmergente, "Entidad no válida.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+        }
+    
+        // Enviar los valores al controlador
+        try {
+            String datos = entidadSeleccionada + "," + clavePrimaria + "," + atributoPK;
+            oyenteVista.eventoProducido(OyenteVista.Evento.BORRAR, datos);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(ventanaEmergente, "Error al procesar la información: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    
+        ventanaEmergente.dispose();
+    }
+
+    private void manejarInsertar(JPanel panelAtributos, JDialog ventanaEmergente, JComboBox<String> selecEntidades) {
+        String entidadSeleccionada = (String) selecEntidades.getSelectedItem();
+        List<String> valores = new ArrayList<>();
+        
+        // 1. Recoger valores manteniendo el orden de los atributos
+        Component[] componentes = panelAtributos.getComponents();
+        for (Component componente : componentes) {
+            if (componente instanceof JTextField) {
+                String texto = ((JTextField) componente).getText().trim();
+                if (texto.isEmpty()) {
+                    JOptionPane.showMessageDialog(ventanaEmergente, 
+                        "Todos los campos deben estar completos.", 
+                        "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                valores.add(texto);
+            }
+        }
+        
+        // 2. Construir cadena en formato: "Entidad,valor1,valor2,...,valorN"
+        String datos = entidadSeleccionada + "," + String.join(",", valores);
+        
+        try {
+            oyenteVista.eventoProducido(OyenteVista.Evento.INSERTAR, datos);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(ventanaEmergente, 
+                "Error al insertar: " + ex.getMessage(), 
+                "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        
+        ventanaEmergente.dispose();
+    }
+
+    
+    private void manejarModificar(JTextField campoTexto, JComboBox<String> selecEntidades, JComboBox<String> selecAtributos, JDialog ventanaEmergente) {
+        String entidad = (String) selecEntidades.getSelectedItem();
+        String atributo = (String) selecAtributos.getSelectedItem();
+        String nuevoValor = campoTexto.getText().trim();
+        String pk = JOptionPane.showInputDialog("Ingrese la clave primaria:"); // O obtenerla de otro campo
+
+        if (entidad == null || atributo == null || nuevoValor.isEmpty() || pk == null) {
+            JOptionPane.showMessageDialog(ventanaEmergente, 
+                "Datos incompletos", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Formato: "Entidad,atributo,nuevoValor,clavePrimaria"
+        String datos = String.join(",", entidad, atributo, nuevoValor, pk);
+        
+        try {
+            oyenteVista.eventoProducido(OyenteVista.Evento.MODIFICAR, datos);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(ventanaEmergente, 
+                "Error al modificar: " + ex.getMessage(), 
+                "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        
+        ventanaEmergente.dispose();
     }
 
     @Override

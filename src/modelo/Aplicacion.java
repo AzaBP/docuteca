@@ -36,5 +36,9 @@ public class Aplicacion {
         }
         return nombreIdentificativo == ((Aplicacion) obj).nombreIdentificativo;
     }
+
+    public static String getAtributoPK() {
+        return "nombre_identificativo";
+    }
     
 }
