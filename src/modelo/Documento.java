@@ -22,7 +22,7 @@ public class Documento {
     }
     
     public String getNombreIdentificativoAplicación(){
-        return nombreIdentificativoAplicacion = aplicacion.getNombreIdentificativo();
+        return nombreIdentificativoAplicacion = aplicacion.getNombreIdApp();
     }
 
     private Documento(int numeroCorrelativoDocumento, String fechaCreacion, String nombre, String tipo, String descripcion_contenido, String claveAsignatura, String nombreIdentificativoAplicacion) {
@@ -32,11 +32,11 @@ public class Documento {
         this.tipo = tipo;
         this.descripcion_contenido = descripcion_contenido;
         this.claveAsignatura = asignatura.getClave();
-        this.nombreIdentificativoAplicacion = aplicacion.getNombreIdentificativo();
+        this.nombreIdentificativoAplicacion = aplicacion.getNombreIdApp();
     }
 
     public static String[] getAtributos(){
-        return new String[] {"numero correlativo", "nombre identificativo", "nombre", "tipo", "fecha creación", "descripción contenido", "clave"};
+        return new String[] {"numero correlativo", "fecha_creacion", "nombre", "tipo", "descripcion contenido", "clave asignatura", "aplicacion"};
     }
 
     @Override

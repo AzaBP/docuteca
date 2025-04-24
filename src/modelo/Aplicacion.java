@@ -6,24 +6,24 @@
 package modelo;
 
 public class Aplicacion {
-    String nombreIdentificativo;
+    String nombreIdApp;
     String version;
-    String nombre;
+    String nombreApp;
     String fabricante;
     
-    public Aplicacion(String nombreIdentificativo, String version, String fabricante){
-        this.nombre = nombre;
+    public Aplicacion(String nombreIdApp, String nombreApp, String version, String fabricante){
+        this.nombreApp = nombreApp;
         this.fabricante = fabricante;
-        this.nombreIdentificativo = nombreIdentificativo;
+        this.nombreIdApp = nombreIdApp;
         this.version = version;
     }
     
-    public String getNombreIdentificativo() {
-        return nombreIdentificativo;
+    public String getNombreIdApp() {
+        return nombreIdApp;
     }
     
     public static String[] getAtributos(){
-        return new String[] { "nombre identificativo", "nombre", "versión", "fabricante"};
+        return new String[] { "nombre id app", "nombre app", "versión", "fabricante"};
     }
 
     @Override
@@ -34,11 +34,11 @@ public class Aplicacion {
         if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
-        return nombreIdentificativo == ((Aplicacion) obj).nombreIdentificativo;
+        return nombreIdApp == ((Aplicacion) obj).nombreIdApp;
     }
 
     public static String getAtributoPK() {
-        return "nombre_identificativo";
+        return "nombre_id_app";
     }
     
 }

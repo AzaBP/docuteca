@@ -47,41 +47,61 @@ public class DocutekaModelo{
     public void insertar(String[] data, String entidad) throws SQLException {
         System.out.println("Insertando en la entidad: " + entidad);
         System.out.println("Valores: " + Arrays.toString(data));
-
+    
+        // Verifica que todos los valores estén completos
+        for (String valor : data) {
+            if (valor == null || valor.isEmpty()) {
+                throw new IllegalArgumentException("Error: Todos los campos deben estar completos.");
+            }
+        }
+    
         switch (entidad) {
             case "Documento":
-                    insertarDocumento(data);
+                System.out.println("Insertando Documento...");
+                insertarDocumento(data);
                 break;
-            case "Aplicación":
-                    insertarAplicacion(data);
+            case "Aplicacion":
+                System.out.println("Insertando app");
+                insertarAplicacion(data);
                 break;
             case "Asignatura":
-                    insertarAsignatura(data);
+                System.out.println("Insertando asignatura");
+                insertarAsignatura(data);
                 break;
+            default:
+                throw new IllegalArgumentException("Entidad desconocida: " + entidad);
         }
     }
     
-    public void insertarDocumento(String[]data) throws SQLException {
-        String sql = "INSERT INTO Documento (numero_correlativo, fecha_creacion, nombre, tipo, descripcion_contenido, clave, nombre_app) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        try (Connection conn = DatabaseConnection.getConnection();
-            PreparedStatement stmt = conn.prepareStatement(sql)) {
-                String numeroCorrelativo = data[0];
-                String fechaCreacion = data[1];
-                String nombre = data[2];
-                String tipo = data[3];
-                String descripcionContenido = data[4];
-                String clave = data[5];
-                String nombreApp = data[6];
-                stmt.setString(1, numeroCorrelativo);
-                stmt.setDate(2, java.sql.Date.valueOf(fechaCreacion)); 
-                stmt.setString(3, nombre);
-                stmt.setString(4, tipo);
-                stmt.setString(5, descripcionContenido);
-                stmt.setString(6, clave);
-                stmt.setString(7, nombreApp);
-                stmt.executeUpdate();
-                System.out.println("Documento insertado correctamente.");
+    public void insertarDocumento(String[] data) throws SQLException {
+        System.out.println("hika");
+        String sql = "INSERT INTO Documento (numero_correlativo, fecha_creacion, nombre, tipo, descripcion_contenido, clave_asignatura, nombre_app) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            if (conn == null) {
+                throw new SQLException("La conexión a la base de datos es nula.");
             }
+            PreparedStatement stmt = conn.prepareStatement(sql);
+                System.out.println("hika2");
+            stmt.setInt(1, Integer.parseInt(data[0])); // numero_correlativo
+            System.out.println("hika2.5");
+            stmt.setString(2, data[1]); // fecha_creacion
+            System.out.println("hika2.6");
+            stmt.setString(3, data[2]); // nombre
+            System.out.println("hika2.7");
+            stmt.setString(4, data[3]); // tipo
+            System.out.println("hika2.8");
+            stmt.setString(5, data[4]); // descripcion_contenido
+            System.out.println("hika2.9");
+            stmt.setString(6, data[5]); // clave
+            System.out.println("hika2.10");
+            stmt.setString(7, data[6]); // nombre_app
+            System.out.println("hika3");
+            stmt.executeUpdate();
+            System.out.println("hika 4");
+            System.out.println("Documento insertado correctamente.");
+        }catch (SQLException e) {
+            System.out.println("Error al insertar el documento: " + e.getMessage());
+        }
     }
 
     public void insertarAplicacion(String[]data) throws SQLException {
@@ -102,19 +122,25 @@ public class DocutekaModelo{
     }
 
     public void insertarAsignatura(String[]data) throws SQLException {
-        String sql = "INSERT INTO Asignatura (clave, nombre, curso, titulación) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO Asignatura (clave_asignatura, nombre_asignatura, curso, titulación) VALUES (?, ?, ?, ?)";
+        System.out.println("Hola Asigna");
         try (Connection conn = DatabaseConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql)) {
-                String clave = data[0];
-                String nombre = data[1];
+                System.out.println("Hola As1");
+                String claveAsignatura = data[0];
+                String nombreAsignatura = data[1];
                 String curso = data[2];
                 String titulacion = data[3];
-                stmt.setString(1, clave);
-                stmt.setString(2, nombre); 
+                System.out.println("Hola As2");
+                stmt.setString(1, claveAsignatura);
+                stmt.setString(2, nombreAsignatura); 
                 stmt.setString(3, curso);
                 stmt.setString(4, titulacion);
+                System.out.println("Hola As3");
                 stmt.executeUpdate();
-                System.out.println("Documento insertado correctamente.");
+                conn.commit();
+                System.out.println("Hola As4");
+                System.out.println("Asignatura insertado correctamente.");
             }
     }
 
@@ -129,8 +155,8 @@ public class DocutekaModelo{
 
         // Lista blanca de columnas modificables
         Set<String> columnasPermitidas = new HashSet<>(Arrays.asList(
-            "nombre", "tipo", "descripcion_contenido", "clave", "nombre_app",
-            "clave", "nombre", "curso", "titulación",
+            "nombre", "tipo", "descripcion_contenido", "clave_asignatura", "nombre_app",
+            "clave", "nombre_asignatura", "curso", "titulación",
             "nombre_identificativo", "nombre", "versión", "fabricante"
         ));
 

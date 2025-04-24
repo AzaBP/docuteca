@@ -11,7 +11,12 @@ public class DatabaseConnection {
 
     // Método para obtener una conexión
     public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(URL, USER, PASSWORD);
+        try {
+            Class.forName("org.postgresql.Driver");
+            return DriverManager.getConnection(URL, USER, PASSWORD);
+        } catch (ClassNotFoundException e) {
+            throw new SQLException("Driver JDBC no encontrado", e);
+        }
     }
 
 }

@@ -6,24 +6,24 @@
 package modelo;
 
 public class Asignatura {
-    String nombre;
-    String clave;
+    String nombreAsignatura;
+    String claveAsignatura;
     String curso;
     String titulacion;
     
-    public Asignatura(String nombre, String clave, String curso, String titulación){
-        this.nombre = nombre;
-        this.clave = clave;
+    public Asignatura(String nombreAsignatura, String claveAsignatura, String curso, String titulación){
+        this.nombreAsignatura = nombreAsignatura;
+        this.claveAsignatura = claveAsignatura;
         this.curso = curso;
         this.titulacion = titulación;
     }
     
     String getClave() {
-        return clave;      
+        return claveAsignatura;      
     }
 
     public static String[] getAtributos(){
-        return new String[] {"clave", "nombre", "curso", "titulación"};
+        return new String[] {"clave asignatura", "nombre asignatura", "curso", "titulación"};
     }
     
     @Override
@@ -34,11 +34,11 @@ public class Asignatura {
         if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
-        return clave == ((Asignatura) obj).clave;
+        return claveAsignatura == ((Asignatura) obj).claveAsignatura;
     }
 
     public static String getAtributoPK() {
-        return "clave";
+        return "clave asignatura";
     }
     
 }
